@@ -13,28 +13,32 @@ STATUS_WEBHOOK_URL = "YOUR_STATUS_WEBHOOK_URL"
 
 Cosmetics = [
     {
-    "CosmeticName":"Stick",
-    "CosmeticId":"LBAAK." 
+        "CosmeticName": "Stick",
+        "CosmeticId": "LBAAK.",
+        "ImageURL": "https://cdn.discordapp.com/attachments/1190579178131697715/1344264139136303134/stick.jpg"
     },
     {
-    "CosmeticName":"Admin Badge",
-    "CosmeticId":"LBAAD." 
+        "CosmeticName": "Admin Badge",
+        "CosmeticId": "LBAAD.",
+        "ImageURL": "https://cdn.discordapp.com/attachments/1190579178131697715/1344265627661238334/Adminbadge.webp"
     },
     {
-    "CosmeticName":"Illustrator Badge",
-    "CosmeticId":"LBAGS." 
+        "CosmeticName": "Illustrator Badge",
+        "CosmeticId": "LBAGS.",
+        "ImageURL": "https://cdn.discordapp.com/attachments/1190579178131697715/1344265780937752586/IllustratorBadgeSprite.webp"
     },
     {
-    "CosmeticName":"Finger Painter",
-    "CosmeticId":"LBADE." 
+        "CosmeticName": "Finger Painter",
+        "CosmeticId": "LBADE.",
+        "ImageURL": "https://cdn.discordapp.com/attachments/1190579178131697715/1344264618750509159/er.webp"
     }
 ]
 
 Colors = [
-    { 
-    "ColorName": "Red",
-    "ColorHex": 0xff0000,
-    "Activated": True,
+    {
+        "ColorName": "Red",
+        "ColorHex": 0xff0000,
+        "Activated": True,
     }
 ]
 
@@ -48,20 +52,21 @@ def get_active_color():
             return ColorData['ColorHex']
     return 0x000000
 
-def FreeWebhook(item, code, region, player_count, board_position, content="@everyone"):
+def FreeWebhook(item, code, region, player_count, board_position, image_url, content="@everyone"):
     try:
         webhook_data = {
             "content": content,
             "embeds": [{
-                "title": f"🔍 Detection Alert 🔍",
+                "title": f"🔍 {item} Detected 🔍",
                 "description": f"Item detected by {TrackerName}",
                 "color": 0xFFD700,
                 "fields": [
-                    {"name": "💫 Item","value": f"```{item}```","inline": False},
-                    {"name": "🌍 Location","value": f"```Room: {code}\nRegion: {region}```","inline": True},
-                    {"name": "📈 Room Data","value": f"```Players: {player_count}\nPosition: {board_position}```","inline": True}
+                    {"name": "💫 Item", "value": f"```{item}```", "inline": False},
+                    {"name": "🌍 Location", "value": f"```Room: {code}\nRegion: {region}```", "inline": True},
+                    {"name": "📈 Room Data", "value": f"```Players: {player_count}\nPosition: {board_position}```", "inline": True}
                 ],
-                "footer": {"text": f"{TrackerName} | src by elian | discord.gg/4wnShQZA4E"}
+                "image": {"url": image_url},
+                "footer": {"text": f"src by elian | discord.gg/4wnShQZA4E"}
             }]
         }
 
@@ -80,11 +85,11 @@ def StartWebhook():
             "description": f"The {TrackerName} is now operational and scanning.",
             "color": 0x00FF00,
             "fields": [
-                {"name": "📊 Parameters","value": f"```Total Codes: {len(Codes)}\nActive Tickets: {len(SessionTickets)}\nTargeted Items: {len(Cosmetics)}```","inline": False},
-                {"name": "💫 Status","value": "```🟢 Active```","inline": True},
-                {"name": "🕒 Time","value": f"```{current_time}```","inline": True},
+                {"name": "📊 Parameters", "value": f"```Total Codes: {len(Codes)}\nActive Tickets: {len(SessionTickets)}\nTargeted Items: {len(Cosmetics)}```", "inline": False},
+                {"name": "💫 Status", "value": "```🟢 Active```", "inline": True},
+                {"name": "🕒 Time", "value": f"```{current_time}```", "inline": True},
             ],
-            "footer": {"text": f"{TrackerName} | src by elian | discord.gg/4wnShQZA4E"}
+            "footer": {"text": f"src by elian | discord.gg/4wnShQZA4E"}
         }]
 
         requests.post(STATUS_WEBHOOK_URL, json={"content": "", "embeds": free_embed})
@@ -131,7 +136,8 @@ def CheckCode():
                             for CosmeticData in Cosmetics:
                                 if CosmeticData['CosmeticId'] in concat:
                                     content = "@everyone"
-                                    FreeWebhook(CosmeticData['CosmeticName'], code, region, player_count, board_position, content)
+                                    image_url = CosmeticData['ImageURL']
+                                    FreeWebhook(CosmeticData['CosmeticName'], code, region, player_count, board_position, image_url, content)
                                     print(Fore.GREEN + f"Found {CosmeticData['CosmeticName']} in code: {code}")
 
                     elif requestjson['code'] == 429:
